@@ -1,0 +1,7 @@
+.container {max-width: 800px; margin: 0 auto; padding: 40px 24px}
+.title {text-align: center; margin-bottom: 32px}
+.modes {display: flex; gap: 12px; margin-bottom: 24px}
+.modes button {flex: 1; padding: 12px; background: #f0f0f0; border: none; border-radius: 6px; cursor: pointer}
+.active {background: #667eea !important; color: white}
+.input, .output {width: 100%; min-height: 150px; padding: 16px; border: 1px solid #ddd; border-radius: 8px; font-family: monospace; margin-bottom: 16px}
+.btn {width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer}
