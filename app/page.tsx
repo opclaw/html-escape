@@ -1,44 +1,116 @@
 'use client'
-import {useState} from 'react'
-import styles from './page.module.css'
+
+import { useState, useCallback } from 'react'
 
 export default function Home() {
   const [input, setInput] = useState('')
   const [output, setOutput] = useState('')
-  const [mode, setMode] = useState('escape')
+  const [mode, setMode] = useState<'escape' | 'unescape'>('escape')
+  const [copied, setCopied] = useState(false)
 
-  const escapeHTML = (str: string) => {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#x27;')
-  }
+  const handleConvert = useCallback(() => {
+    if (mode === 'escape') {
+      setOutput(input.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'))
+    } else {
+      setOutput(input.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'"))
+    }
+  }, [input, mode])
 
-  const unescapeHTML = (str: string) => {
-    return str
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#x27;/g, "'")
-  }
-
-  const handleConvert = () => {
-    setOutput(mode === 'escape' ? escapeHTML(input) : unescapeHTML(input))
-  }
+  const copyToClipboard = useCallback(() => {
+    navigator.clipboard.writeText(output)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }, [output])
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>HTML Escape / Unescape</h1>
-      <div className={styles.modes}>
-        <button onClick={() => setMode('escape')} className={mode === 'escape' ? styles.active : ''}>Escape</button>
-        <button onClick={() => setMode('unescape')} className={mode === 'unescape' ? styles.active : ''}>Unescape</button>
-      </div>
-      <textarea value={input} onChange={e => setInput(e.target.value)} className={styles.input} placeholder="Enter HTML..." />
-      <button onClick={handleConvert} className={styles.btn}>Convert</button>
-      <textarea value={output} readOnly className={styles.output} placeholder="Result..." />
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-2xl shadow-lg">🏷️</div>
+              <div>
+                <h1 className="text-xl font-bold text-slate-900">HTML Escape</h1>
+                <p className="text-sm text-slate-500">Encode & Decode</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section className="bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+          <div className="text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 text-3xl shadow-xl mb-6">🏷️</div>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">HTML Escape / Unescape</h2>
+            <p className="text-lg md:text-xl text-slate-600">Encode HTML entities or decode them back to regular text.</p>
+          </div>
+        </div>
+      </section>
+
+      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-lg p-6 md:p-8">
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex bg-slate-100 rounded-xl p-1.5">
+              <button
+                onClick={() => { setMode('escape'); setOutput(''); }}
+                className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${mode === 'escape' ? 'bg-white text-rose-600 shadow-md' : 'text-slate-600'}`}
+              >
+                🏷️ Escape
+              </button>
+              <button
+                onClick={() => { setMode('unescape'); setOutput(''); }}
+                className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${mode === 'unescape' ? 'bg-white text-rose-600 shadow-md' : 'text-slate-600'}`}
+              >
+                🔓 Unescape
+              </button>
+            </div>
+          </div>
+
+          <div className="flex gap-3 mb-6">
+            <button onClick={handleConvert} className="btn-primary bg-rose-600 hover:bg-rose-700" disabled={!input}>
+              Convert
+            </button>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-6">
+            <div className="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
+              <div className="px-4 py-3 bg-slate-100 border-b border-slate-200">
+                <span className="text-sm font-semibold text-slate-700">Input</span>
+              </div>
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder={mode === 'escape' ? 'Enter HTML to escape...' : 'Enter escaped HTML...'}
+                className="w-full h-64 px-4 py-3 bg-white border-0 resize-y focus:outline-none"
+              />
+            </div>
+
+            <div className="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 bg-slate-100 border-b border-slate-200">
+                <span className="text-sm font-semibold text-slate-700">Output</span>
+                {output && (
+                  <button onClick={copyToClipboard} className="text-xs font-medium text-rose-600">
+                    {copied ? '✓ Copied!' : '📋 Copy'}
+                  </button>
+                )}
+              </div>
+              <textarea
+                value={output}
+                readOnly
+                placeholder="Result will appear here..."
+                className="w-full h-64 px-4 py-3 bg-slate-50 border-0 resize-y focus:outline-none font-mono text-sm"
+              />
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer className="bg-slate-900 text-slate-400 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-sm">© 2024 SmartOK Tools. Free online tools.</p>
+        </div>
+      </footer>
     </div>
   )
 }
