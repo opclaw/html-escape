@@ -17,11 +17,13 @@ export const metadata: Metadata = {
     siteName: 'HTML Escape',
     title: 'HTML Escape / Unescape — Online Tool',
     description: 'Escape and unescape HTML entities.',
+    images: ['/og-image.svg'],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'HTML Escape / Unescape',
     description: 'Escape and unescape HTML entities.',
+    images: ['/og-image.svg'],
   },
   robots: { index: true, follow: true },
 }
