@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://html-escape.vercel.app/sitemap.xml

@@ -3,6 +3,9 @@ import './globals.css'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://html-escape.vercel.app'),
+  alternates: {
+    canonical: 'https://html-escape.vercel.app',
+  },
   title: 'HTML Escape / Unescape — Online Tool | Free',
   description: 'Escape and unescape HTML entities. Free online HTML encoder and decoder for web developers.',
   keywords: ['html escape', 'html unescape', 'html encoder', 'html decoder', 'html entities'],
